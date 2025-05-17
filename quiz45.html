@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 16</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 16</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (451-480) con opzioni mescolate casualmente
+        const questions = [
+            {
+                question: "Cos’è la psoriasi?",
+                options: ["Un’infiammazione della vescica", "Una malattia cronica della pelle", "Un accumulo di liquido nei polmoni"],
+                correct: "Una malattia cronica della pelle",
+                explanation: "La psoriasi è una malattia cronica autoimmune della pelle, caratterizzata da placche squamose rosse, spesso pruriginose. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare la pelle, applicare creme idratanti se prescritte e segnalare infezioni cutanee."
+            },
+            {
+                question: "Quale è un segno tipico della psoriasi?",
+                options: ["Placche squamose", "Poliuria", "Ittero"],
+                correct: "Placche squamose",
+                explanation: "Le placche squamose, spesso su gomiti, ginocchia o cuoio capelluto, sono un segno tipico della psoriasi. La poliuria e l’ittero non sono correlati. Gli OSS devono osservare la pelle, garantire l’igiene e segnalare lesioni o arrossamenti."
+            },
+            {
+                question: "Cos’è l’eczema?",
+                options: ["Un’infiammazione del fegato", "Un’infiammazione cronica della pelle", "Un blocco renale"],
+                correct: "Un’infiammazione cronica della pelle",
+                explanation: "L’eczema (o dermatite atopica) è un’infiammazione cronica della pelle, con sintomi come prurito, arrossamento e vescicole. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono applicare emollienti, evitare irritanti e segnalare infezioni cutanee."
+            },
+            {
+                question: "Quale è un segno tipico dell’eczema?",
+                options: ["Prurito intenso", "Oliguria", "Ittero"],
+                correct: "Prurito intenso",
+                explanation: "Il prurito intenso, spesso con arrossamento, è un segno tipico dell’eczema. L’oliguria e l’ittero non sono correlati. Gli OSS devono monitorare la pelle, evitare grattamento e segnalare segni di infezione come pus."
+            },
+            {
+                question: "Cos’è l’acne?",
+                options: ["Un’infiammazione della vescica", "Un disturbo delle ghiandole sebacee", "Un accumulo di liquido nei polmoni"],
+                correct: "Un disturbo delle ghiandole sebacee",
+                explanation: "L’acne è un disturbo delle ghiandole sebacee, che causa comedoni, papule e pustole, spesso sul viso o sulla schiena. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono garantire l’igiene cutanea, applicare trattamenti topici se prescritti e segnalare infezioni."
+            },
+            {
+                question: "Quale è un segno tipico dell’acne?",
+                options: ["Comedoni", "Poliuria", "Ittero"],
+                correct: "Comedoni",
+                explanation: "I comedoni (punti neri o bianchi) sono un segno tipico dell’acne, spesso accompagnati da papule. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare la pelle, evitare la spremitura delle lesioni e segnalare arrossamenti gravi."
+            },
+            {
+                question: "Cos’è l’herpes zoster?",
+                options: ["Un’infiammazione del fegato", "Un’infezione virale con eruzione cutanea", "Un blocco renale"],
+                correct: "Un’infezione virale con eruzione cutanea",
+                explanation: "L’herpes zoster (fuoco di Sant’Antonio) è un’infezione virale causata dal virus varicella-zoster, con eruzione cutanea dolorosa e vescicole. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare le lesioni, garantire l’igiene e segnalare dolore neuropatico."
+            },
+            {
+                question: "Quale è un segno tipico dell’herpes zoster?",
+                options: ["Eruzione cutanea unilaterale", "Oliguria", "Ittero"],
+                correct: "Eruzione cutanea unilaterale",
+                explanation: "L’eruzione cutanea unilaterale, spesso lungo un dermatoma, è un segno tipico dell’herpes zoster, accompagnata da dolore. L’oliguria e l’ittero non sono correlati. Gli OSS devono evitare il contatto diretto con le lesioni e segnalare sintomi come febbre."
+            },
+            {
+                question: "Cos’è l’herpes simplex?",
+                options: ["Un’infiammazione della vescica", "Un’infezione virale con vescicole", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infezione virale con vescicole",
+                explanation: "L’herpes simplex è un’infezione virale (HSV) che causa vescicole dolorose, spesso su labbra o genitali. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono garantire l’igiene, applicare antivirali topici se prescritti e segnalare infezioni ricorrenti."
+            },
+            {
+                question: "Quale è un segno tipico dell’herpes simplex?",
+                options: ["Vescicole dolorose", "Poliuria", "Ittero"],
+                correct: "Vescicole dolorose",
+                explanation: "Le vescicole dolorose, spesso su labbra o genitali, sono un segno tipico dell’herpes simplex. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare le lesioni, evitare il contatto diretto e segnalare sintomi sistemici."
+            },
+            {
+                question: "Cos’è la dermatite da contatto?",
+                options: ["Un’infiammazione del fegato", "Un’infiammazione cutanea da allergeni", "Un blocco renale"],
+                correct: "Un’infiammazione cutanea da allergeni",
+                explanation: "La dermatite da contatto è un’infiammazione cutanea causata da allergeni o irritanti, con sintomi come arrossamento e prurito. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono identificare gli allergeni, applicare creme se prescritte e segnalare infezioni."
+            },
+            {
+                question: "Quale è un segno tipico della dermatite da contatto?",
+                options: ["Arrossamento localizzato", "Oliguria", "Ittero"],
+                correct: "Arrossamento localizzato",
+                explanation: "L’arrossamento localizzato, spesso con prurito, è un segno tipico della dermatite da contatto. L’oliguria e l’ittero non sono correlati. Gli OSS devono monitorare la pelle, evitare irritanti e segnalare gonfiore o secrezioni."
+            },
+            {
+                question: "Cos’è la vitiligine?",
+                options: ["Un’infiammazione della vescica", "Una perdita di pigmentazione cutanea", "Un accumulo di liquido nei polmoni"],
+                correct: "Una perdita di pigmentazione cutanea",
+                explanation: "La vitiligine è una condizione autoimmune che causa la perdita di pigmentazione cutanea, con macchie bianche. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare la pelle, proteggere le aree depigmentate dal sole e segnalare nuove lesioni."
+            },
+            {
+                question: "Quale è un segno tipico della vitiligine?",
+                options: ["Macchie bianche", "Poliuria", "Ittero"],
+                correct: "Macchie bianche",
+                explanation: "Le macchie bianche, dovute alla perdita di melanina, sono un segno tipico della vitiligine. La poliuria e l’ittero non sono correlati. Gli OSS devono applicare schermi solari, monitorare l’estensione delle macchie e segnalare cambiamenti."
+            },
+            {
+                question: "Cos’è la candidosi cutanea?",
+                options: ["Un’infiammazione del fegato", "Un’infezione fungina della pelle", "Un blocco renale"],
+                correct: "Un’infezione fungina della pelle",
+                explanation: "La candidosi cutanea è un’infezione fungina causata da Candida, con sintomi come arrossamento e prurito, spesso in aree umide. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono mantenere la pelle asciutta, applicare antimicotici se prescritti e segnalare infezioni."
+            },
+            {
+                question: "Quale è un segno tipico della candidosi cutanea?",
+                options: ["Arrossamento umido", "Oliguria", "Ittero"],
+                correct: "Arrossamento umido",
+                explanation: "L’arrossamento umido, spesso con prurito, è un segno tipico della candidosi cutanea, specialmente in pieghe cutanee. L’oliguria e l’ittero non sono correlati. Gli OSS devono garantire l’igiene, evitare l’umidità e segnalare lesioni persistenti."
+            },
+            {
+                question: "Cos’è la scabbia?",
+                options: ["Un’infiammazione della vescica", "Un’infestazione da acari della pelle", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infestazione da acari della pelle",
+                explanation: "La scabbia è un’infestazione cutanea da acari (Sarcoptes scabiei), con sintomi come prurito intenso e lesioni da grattamento. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono utilizzare guanti, applicare trattamenti scabicidi e segnalare casi sospetti."
+            },
+            {
+                question: "Quale è un segno tipico della scabbia?",
+                options: ["Prurito notturno", "Poliuria", "Ittero"],
+                correct: "Prurito notturno",
+                explanation: "Il prurito notturno, spesso intenso, è un segno tipico della scabbia, accompagnato da lesioni lineari. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare la pelle, garantire l’isolamento e segnalare sintomi diffusi."
+            },
+            {
+                question: "Cos’è la tinea pedis?",
+                options: ["Un’infiammazione del fegato", "Un’infezione fungina del piede", "Un blocco renale"],
+                correct: "Un’infezione fungina del piede",
+                explanation: "La tinea pedis (piede d’atleta) è un’infezione fungina del piede, con sintomi come prurito, desquamazione e fissurazioni. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono mantenere i piedi asciutti, applicare antimicotici e segnalare infezioni."
+            },
+            {
+                question: "Quale è un segno tipico della tinea pedis?",
+                options: ["Desquamazione interdigitale", "Oliguria", "Ittero"],
+                correct: "Desquamazione interdigitale",
+                explanation: "La desquamazione interdigitale, spesso con prurito, è un segno tipico della tinea pedis. L’oliguria e l’ittero non sono correlati. Gli OSS devono garantire l’igiene dei piedi, evitare calzature strette e segnalare lesioni persistenti."
+            },
+            {
+                question: "Cos’è un’ulcera da pressione?",
+                options: ["Un’infiammazione della vescica", "Una lesione cutanea da pressione prolungata", "Un accumulo di liquido nei polmoni"],
+                correct: "Una lesione cutanea da pressione prolungata",
+                explanation: "Un’ulcera da pressione è una lesione cutanea causata da pressione prolungata, comune nei pazienti allettati, con stadi da arrossamento a necrosi. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono cambiare posizione regolarmente, utilizzare materassi antidecubito e segnalare lesioni."
+            },
+            {
+                question: "Quale è un segno tipico dell’ulcera da pressione?",
+                options: ["Arrossamento persistente", "Poliuria", "Ittero"],
+                correct: "Arrossamento persistente",
+                explanation: "L’arrossamento persistente, che non scompare alla pressione, è un segno tipico del primo stadio dell’ulcera da pressione. La poliuria e l’ittero non sono correlati. Gli OSS devono ispezionare la pelle, prevenire la pressione e segnalare arrossamenti."
+            },
+            {
+                question: "Cos’è la cellulite infettiva?",
+                options: ["Un’infiammazione del fegato", "Un’infezione batterica della pelle", "Un blocco renale"],
+                correct: "Un’infezione batterica della pelle",
+                explanation: "La cellulite infettiva è un’infezione batterica della pelle e dei tessuti sottocutanei, con sintomi come arrossamento, calore e dolore. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare la temperatura, applicare medicazioni e segnalare febbre."
+            },
+            {
+                question: "Quale è un segno tipico della cellulite infettiva?",
+                options: ["Calore locale", "Oliguria", "Ittero"],
+                correct: "Calore locale",
+                explanation: "Il calore locale, insieme ad arrossamento e gonfiore, è un segno tipico della cellulite infettiva. L’oliguria e l’ittero non sono correlati. Gli OSS devono osservare la pelle, misurare la febbre e segnalare segni di diffusione."
+            },
+            {
+                question: "Cos’è l’onicomicosi?",
+                options: ["Un’infiammazione della vescica", "Un’infezione fungina delle unghie", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infezione fungina delle unghie",
+                explanation: "L’onicomicosi è un’infezione fungina delle unghie, che causa ispessimento, scolorimento e fragilità. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono tagliare le unghie con cura, applicare antimicotici se prescritti e segnalare infezioni."
+            },
+            {
+                question: "Quale è un segno tipico dell’onicomicosi?",
+                options: ["Unghie ispessite", "Poliuria", "Ittero"],
+                correct: "Unghie ispessite",
+                explanation: "Le unghie ispessite, spesso giallastre, sono un segno tipico dell’onicomicosi. La poliuria e l’ittero non sono correlati. Gli OSS devono garantire l’igiene delle unghie, evitare traumi e segnalare cambiamenti."
+            },
+            {
+                question: "Cos’è l’impetigine?",
+                options: ["Un’infiammazione del fegato", "Un’infezione batterica cutanea", "Un blocco renale"],
+                correct: "Un’infezione batterica cutanea",
+                explanation: "L’impetigine è un’infezione batterica superficiale della pelle, spesso causata da stafilococchi, con croste miele o vescicole. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono applicare antibiotici topici, garantire l’igiene e segnalare diffusione."
+            },
+            {
+                question: "Quale è un segno tipico dell’impetigine?",
+                options: ["Croste color miele", "Oliguria", "Ittero"],
+                correct: "Croste color miele",
+                explanation: "Le croste color miele sono un segno tipico dell’impetigine, spesso sul viso. L’oliguria e l’ittero non sono correlati. Gli OSS devono evitare il contatto diretto, mantenere la pelle pulita e segnalare febbre."
+            },
+            {
+                question: "Cos’è la rosacea?",
+                options: ["Un’infiammazione della vescica", "Una malattia cronica del viso", "Un accumulo di liquido nei polmoni"],
+                correct: "Una malattia cronica del viso",
+                explanation: "La rosacea è una malattia cronica che causa arrossamento, papule e teleangectasie sul viso, spesso scatenata da sole o stress. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono evitare trigger, applicare creme e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della rosacea?",
+                options: ["Arrossamento facciale", "Poliuria", "Ittero"],
+                correct: "Arrossamento facciale",
+                explanation: "L’arrossamento facciale, spesso su guance e naso, è un segno tipico della rosacea. La poliuria e l’ittero non sono correlati. Gli OSS devono monitorare la pelle, proteggere dal sole e segnalare papule o pustole."
+            },
+            {
+                question: "Cos’è la verruca?",
+                options: ["Un’infiammazione del fegato", "Un’escrescenza cutanea virale", "Un blocco renale"],
+                correct: "Un’escrescenza cutanea virale",
+                explanation: "La verruca è un’escrescenza cutanea causata dal papillomavirus umano (HPV), spesso su mani o piedi. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono applicare trattamenti topici se prescritti, garantire l’igiene e segnalare verruche diffuse."
+            },
+            {
+                question: "Quale è un segno tipico della verruca?",
+                options: ["Escrescenza ruvida", "Oliguria", "Ittero"],
+                correct: "Escrescenza ruvida",
+                explanation: "L’escrescenza ruvida, spesso con punti neri, è un segno tipico della verruca. L’oliguria e l’ittero non sono correlati. Gli OSS devono monitorare le lesioni, evitare il contatto diretto e segnalare verruche dolorose."
+            },
+            {
+                question: "Cos’è l’alopecia?",
+                options: ["Un’infiammazione della vescica", "Una perdita di capelli", "Un accumulo di liquido nei polmoni"],
+                correct: "Una perdita di capelli",
+                explanation: "L’alopecia è una perdita di capelli, che può essere localizzata (areata) o diffusa, causata da fattori autoimmuni, stress o farmaci. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare il cuoio capelluto, garantire il comfort psicologico e segnalare nuove aree."
+            },
+            {
+                question: "Quale è un segno tipico dell’alopecia?",
+                options: ["Chiazze calve", "Poliuria", "Ittero"],
+                correct: "Chiazze calve",
+                explanation: "Le chiazze calve, spesso circolari, sono un segno tipico dell’alopecia areata. La poliuria e l’ittero non sono correlati. Gli OSS devono osservare il cuoio capelluto, supportare il paziente emotivamente e segnalare estensioni della perdita."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
